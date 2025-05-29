@@ -125,33 +125,37 @@ const ProfilePage = () => {
     <div className="py-12 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Profile Section */}
-        <section className="bg-white rounded-2xl shadow-lg p-8 mb-12">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        <section className="bg-white rounded-2xl shadow-lg p-8 mb-12 flex justify-center">
+          <div className="flex flex-col items-center text-center gap-6">
             <img
               src={user.profileImage || 'https://cdn-icons-png.flaticon.com/512/847/847969.png'}
               alt="รูปโปรไฟล์"
               className="w-40 h-40 rounded-full object-cover shadow-md border-4 border-primary"
             />
             
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-primary mb-2">{user.username}</h1>
-              <p className="text-gray-600 mb-1">{user.email}</p>
-              
-              {(bmr || user.bmr) && (
-                <p className="text-gray-700 font-medium mt-4">
-                  BMR: {bmr || user.bmr} kcal 
-                  {(tdee || user.tdee) && ` | TDEE: ${tdee || user.tdee} kcal`}
-                </p>
-              )}
-              
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="mt-6 bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-full flex items-center gap-2 mx-auto md:mx-0"
-              >
-                <Edit size={16} />
-                <span>แก้ไขโปรไฟล์</span>
-              </button>
-            </div>
+            <div className="flex-1 flex flex-col items-center text-center">
+  <h1 className="text-3xl font-bold text-primary mb-2 break-words max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+    {user.username}
+  </h1>
+  
+  <p className="text-gray-600 mb-1 break-words">{user.email}</p>
+
+  {(bmr || user.bmr) && (
+    <p className="text-gray-700 font-medium mt-4">
+      BMR: {bmr || user.bmr} kcal 
+      {(tdee || user.tdee) && ` | TDEE: ${tdee || user.tdee} kcal`}
+    </p>
+  )}
+
+  <button
+    onClick={() => setShowEditModal(true)}
+    className="mt-6 bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-full flex items-center gap-2"
+  >
+    <Edit size={16} />
+    <span>แก้ไขโปรไฟล์</span>
+  </button>
+</div>
+
           </div>
         </section>
         
@@ -169,7 +173,7 @@ const ProfilePage = () => {
             <div className="bg-gray-100 rounded-lg p-8 text-center">
               <p className="text-gray-600">คุณยังไม่มีเมนูโปรด</p>
               <button
-                onClick={() => navigate('/popular-menu')}
+                onClick={() => navigate('/search')}
                 className="mt-4 bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-full"
               >
                 ค้นหาเมนูอาหาร

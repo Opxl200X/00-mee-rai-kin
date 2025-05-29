@@ -6,14 +6,20 @@ const Footer = () => {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         
         {/* LOGO / ABOUT */}
-        <div>
-          <h3 className="text-2xl font-extrabold mb-2 drop-shadow-lg">Mee Rai Kin</h3>
-          <div className="w-12 h-0.5 bg-yellow-200 mb-4 rounded"></div>
-          <p className="text-white text-opacity-90 leading-relaxed drop-shadow-md">
-            แหล่งรวมเมนูอาหารไทยที่คุณสามารถทำได้ง่ายๆ <br />
-            จากวัตถุดิบที่มีอยู่ในบ้าน
-          </p>
-        </div>
+<div>
+  <h3 className="text-2xl font-extrabold mb-2 drop-shadow-lg">Mee Rai Kin</h3>
+  <div className="w-12 h-0.5 bg-yellow-200 mb-4 rounded"></div>
+  <p className="text-white text-opacity-90 leading-relaxed drop-shadow-md mb-4">
+    แหล่งรวมเมนูอาหารไทยที่คุณสามารถทำได้ง่ายๆ <br />
+    จากวัตถุดิบที่มีอยู่ในบ้าน
+  </p>
+  <img
+    src="https://i.ibb.co/spRKDrsP/FBB5-EB7-A-5-EDE-438-A-B53-C-746-C2-DFAA680.jpg"
+    alt="Mee Rai Kin Logo"
+    className="w-24 h-auto rounded shadow-md"
+  />
+</div>
+
 
         {/* MAIN MENU */}
         <div>

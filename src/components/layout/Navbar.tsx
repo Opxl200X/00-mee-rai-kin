@@ -21,11 +21,11 @@ const Navbar = () => {
     }
   };
 
-  const logoImageUrl = "https://img.icons8.com/emoji/48/hamburger-emoji.png";
+  const logoImageUrl = "https://i.ibb.co/spRKDrsP/FBB5-EB7-A-5-EDE-438-A-B53-C-746-C2-DFAA680.jpg";
   const defaultProfileImage = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
   return (
-    <header className="bg-primary py-2 px-4 md:px-6 flex items-center justify-between flex-wrap animate-fade-down shadow-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-primary py-2 px-4 md:px-6 flex items-center justify-between flex-wrap shadow-md">
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center gap-3">
           <img 

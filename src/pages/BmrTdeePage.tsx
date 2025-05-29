@@ -51,7 +51,7 @@ const BmrTdeePage = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">คำนวณ BMR & TDEE</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            คำนวณความต้องการพลังงานของร่างกาย เพื่อควบคุมน้ำหนักและวางแผนอาหารให้เหมาะสม
+            คำนวณความต้องการพลังงานของร่างกาย <br /> เพื่อควบคุมน้ำหนักและวางแผนอาหารให้เหมาะสม
           </p>
         </div>
         

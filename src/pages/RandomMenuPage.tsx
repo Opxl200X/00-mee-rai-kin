@@ -11,7 +11,6 @@ const RandomMenuPage = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Initialize with a random recipe
     if (!currentRecipe && recipes.length > 0) {
       setCurrentRecipe(getRandomRecipe());
     }
@@ -23,15 +22,10 @@ const RandomMenuPage = () => {
     setIsLoading(true);
     setAnimating(true);
     
-    // Simulate loading for better UX
     setTimeout(() => {
       setCurrentRecipe(getRandomRecipe());
       setIsLoading(false);
-      
-      // Keep animation a bit longer for better effect
-      setTimeout(() => {
-        setAnimating(false);
-      }, 300);
+      setTimeout(() => setAnimating(false), 300);
     }, 500);
   };
   
@@ -50,7 +44,7 @@ const RandomMenuPage = () => {
   }
   
   return (
-    <div className="min-h-screen py-16 px-4 bg-gradient-to-b from-background to-pink-100">
+    <div className="min-h-screen py-16 px-4 animated-gradient">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl font-bold mb-8 animate-fade-down">สุ่มเมนูอาหาร</h1>
         
@@ -63,6 +57,7 @@ const RandomMenuPage = () => {
               src={currentRecipe.imageUrl}
               alt={currentRecipe.title}
               className="w-full h-full object-cover transform transition-all duration-500 hover:scale-105"
+              style={{ filter: 'brightness(100%)' }}
             />
             
             <button 

@@ -103,3 +103,33 @@ select:focus {
 .form-container {
   @apply bg-[#f8bbd0] rounded-3xl p-8 shadow-lg max-w-md w-full transition-all duration-300 hover:shadow-xl;
 }
+
+@keyframes pastelRainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(270deg,
+    #f8c4ec,   /* pink pastel */
+    #d7c4f8,   /* purple pastel */
+    #c4d9f8,   /* blue pastel */
+    #c4f8e1,   /* green pastel */
+    #f8f7c4,   /* yellow pastel */
+    #f8d4a8,   /* orange pastel */
+    #f8c4c4    /* red pastel */
+  );
+  background-size: 1400% 1400%;
+  animation: pastelRainbow 10s ease infinite;
+}
+/* เพิ่ม padding-top เพื่อเว้นระยะ Navbar จากส่วนบนสุดของหน้า */
+.page-container {
+  padding-top: 80px; /* ปรับค่าตามความต้องการ */
+}

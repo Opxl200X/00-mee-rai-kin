@@ -167,7 +167,7 @@ const HomePage = () => {
 
           {showFilters && (
   <div className="mb-8 bg-secondary p-4 rounded-xl shadow-inner max-w-5xl mx-auto">
-    <h3 className="text-lg font-bold mb-3 text-center">ตัวกรองเมนู</h3>
+    <h3 className="text-lg font-bold mb-3 text-left">ตัวกรองเมนู</h3>
     <div className="flex justify-center">
       <div className="flex flex-wrap justify-center gap-3">
         {filters.map((filter) => (
