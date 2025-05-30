@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useRecipeStore, Recipe, Ingredient } from '../store/recipeStore';
+import { useAuthStore } from '../store/authStore'; // 🔒 เพิ่มส่วนนี้
 import { Star, Share2, Clock, BarChart2, Flame } from 'lucide-react';
 
 interface IngredientWithAmount extends Ingredient {
@@ -12,51 +13,55 @@ const MenuDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getRecipeById, toggleFavorite, favoriteRecipes } = useRecipeStore();
-  
+  const { isLoggedIn } = useAuthStore(); // 🔒 ใช้สถานะล็อกอิน
+
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [ingredients, setIngredients] = useState<IngredientWithAmount[]>([]);
   const [totalCalories, setTotalCalories] = useState(0);
-  
+
   useEffect(() => {
     if (id) {
       const recipeData = getRecipeById(id);
-      
+
       if (recipeData) {
         setRecipe(recipeData);
         setIsFavorite(favoriteRecipes.includes(id));
-        
-        // Initialize ingredients with amount and usage status
+
         const initialIngredients = recipeData.ingredients.map(ingredient => ({
           ...ingredient,
           isUsed: true,
-          amount: 0
+          amount: 0,
         }));
-        
+
         setIngredients(initialIngredients);
       } else {
         navigate('/not-found');
       }
     }
   }, [id, getRecipeById, favoriteRecipes, navigate]);
-  
+
   const handleToggleFavorite = () => {
+    if (!isLoggedIn) {
+      alert('กรุณาเข้าสู่ระบบเพื่อเพิ่มเมนูในรายการโปรด');
+      return;
+    }
+
     if (id) {
       toggleFavorite(id);
       setIsFavorite(!isFavorite);
     }
   };
-  
+
   const handleShare = async () => {
     try {
       if (navigator.share) {
         await navigator.share({
           title: recipe?.title || 'เมนูอาหาร',
           text: `เมนู${recipe?.title || 'อาหาร'}จาก Mee Rai Kin`,
-          url: window.location.href
+          url: window.location.href,
         });
       } else {
-        // Fallback for browsers that don't support navigator.share
         navigator.clipboard.writeText(window.location.href);
         alert('คัดลอกลิงก์เรียบร้อยแล้ว!');
       }
@@ -64,41 +69,40 @@ const MenuDetailPage = () => {
       console.error('Error sharing:', error);
     }
   };
-  
+
   const handleToggleIngredient = (index: number) => {
     const updatedIngredients = [...ingredients];
     updatedIngredients[index].isUsed = !updatedIngredients[index].isUsed;
-    
-    // Reset amount if ingredient is disabled
+
     if (!updatedIngredients[index].isUsed) {
       updatedIngredients[index].amount = 0;
     }
-    
+
     setIngredients(updatedIngredients);
     calculateTotalCalories(updatedIngredients);
   };
-  
+
   const handleAmountChange = (index: number, value: string) => {
     const amount = parseFloat(value) || 0;
     const updatedIngredients = [...ingredients];
     updatedIngredients[index].amount = amount;
-    
+
     setIngredients(updatedIngredients);
     calculateTotalCalories(updatedIngredients);
   };
-  
+
   const calculateTotalCalories = (ingredientsList: IngredientWithAmount[]) => {
     let total = 0;
-    
+
     ingredientsList.forEach(ingredient => {
       if (ingredient.isUsed && ingredient.amount > 0) {
         total += (ingredient.amount / 100) * ingredient.caloriesPerUnit;
       }
     });
-    
+
     setTotalCalories(total);
   };
-  
+
   if (!recipe) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -106,16 +110,20 @@ const MenuDetailPage = () => {
       </div>
     );
   }
-  
+
   const getDifficultyText = (difficulty: string) => {
-    switch(difficulty) {
-      case 'easy': return 'ง่าย';
-      case 'medium': return 'ปานกลาง';
-      case 'hard': return 'ยาก';
-      default: return difficulty;
+    switch (difficulty) {
+      case 'easy':
+        return 'ง่าย';
+      case 'medium':
+        return 'ปานกลาง';
+      case 'hard':
+        return 'ยาก';
+      default:
+        return difficulty;
     }
   };
-  
+
   return (
     <div className="py-12 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
@@ -129,25 +137,28 @@ const MenuDetailPage = () => {
               />
             </div>
           </div>
-          
+
           <div className="md:w-1/2">
             <div className="flex justify-between items-start mb-4">
               <h1 className="text-3xl font-bold">{recipe.title}</h1>
-              
+
               <div className="flex gap-3">
                 <button
                   onClick={handleToggleFavorite}
                   className={`p-2 rounded-full transition-colors duration-300 ${
                     isFavorite ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'
                   }`}
-                  aria-label={isFavorite ? 'ลบออกจากรายการโปรด' : 'เพิ่มในรายการโปรด'}
+                  aria-label={
+                    isLoggedIn
+                      ? isFavorite
+                        ? 'ลบออกจากรายการโปรด'
+                        : 'เพิ่มในรายการโปรด'
+                      : 'เข้าสู่ระบบเพื่อเพิ่มรายการโปรด'
+                  }
                 >
-                  <Star 
-                    size={24} 
-                    fill={isFavorite ? 'currentColor' : 'none'} 
-                  />
+                  <Star size={24} fill={isFavorite ? 'currentColor' : 'none'} />
                 </button>
-                
+
                 <button
                   onClick={handleShare}
                   className="p-2 text-gray-400 hover:text-primary-dark rounded-full transition-colors duration-300"
@@ -157,18 +168,18 @@ const MenuDetailPage = () => {
                 </button>
               </div>
             </div>
-            
+
             <div className="flex gap-4 mb-6">
               <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
                 <Clock size={16} />
                 <span>{recipe.cookTime} นาที</span>
               </div>
-              
+
               <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
                 <BarChart2 size={16} />
                 <span>{getDifficultyText(recipe.difficulty)}</span>
               </div>
-              
+
               <div className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full">
                 <Flame size={16} className="text-orange-500" />
                 <span>{recipe.calories} cal</span>
@@ -176,11 +187,11 @@ const MenuDetailPage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Ingredients Table */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">วัตถุดิบ</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full border-collapse rounded-lg overflow-hidden shadow-sm">
               <thead className="bg-gray-100">
@@ -196,7 +207,7 @@ const MenuDetailPage = () => {
                 {ingredients.map((ingredient, index) => (
                   <tr key={ingredient.id} className="border-b border-gray-200">
                     <td className="py-3 px-4">
-                      <button 
+                      <button
                         onClick={() => handleToggleIngredient(index)}
                         className={`font-bold text-xl ${
                           ingredient.isUsed ? 'text-primary' : 'text-red-500'
@@ -205,11 +216,17 @@ const MenuDetailPage = () => {
                         {ingredient.isUsed ? '✔️' : '❌'}
                       </button>
                     </td>
-                    <td className={`py-3 px-4 ${!ingredient.isUsed ? 'line-through text-gray-400' : ''}`}>
+                    <td
+                      className={`py-3 px-4 ${
+                        !ingredient.isUsed ? 'line-through text-gray-400' : ''
+                      }`}
+                    >
                       {ingredient.name}
                     </td>
                     <td className="py-3 px-4">{ingredient.nutrition}</td>
-                    <td className="py-3 px-4">{ingredient.caloriesPerUnit} cal/{ingredient.unit}</td>
+                    <td className="py-3 px-4">
+                      {ingredient.caloriesPerUnit} cal/{ingredient.unit}
+                    </td>
                     <td className="py-3 px-4">
                       <input
                         type="number"
@@ -226,32 +243,34 @@ const MenuDetailPage = () => {
               </tbody>
             </table>
           </div>
-          
+
           <div className="mt-6 text-xl font-bold text-center text-primary animate-pulse">
             แคลอรี่รวม: {totalCalories.toFixed(0)} cal
           </div>
         </div>
-        
+
         {/* Cooking Steps */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">วิธีทำ</h2>
-          
+
           <ol className="list-decimal pl-6 space-y-3">
             {recipe.steps.map((step, index) => (
-              <li key={index} className="text-lg">{step}</li>
+              <li key={index} className="text-lg">
+                {step}
+              </li>
             ))}
           </ol>
         </div>
-        
+
         {/* Video */}
         {recipe.videoUrl && (
           <div>
             <h2 className="text-2xl font-bold mb-4">วิดีโอสาธิต</h2>
-            
+
             <div className="rounded-xl overflow-hidden shadow-lg">
-              <video 
-                src={recipe.videoUrl} 
-                controls 
+              <video
+                src={recipe.videoUrl}
+                controls
                 className="w-full"
                 poster={recipe.imageUrl}
               ></video>

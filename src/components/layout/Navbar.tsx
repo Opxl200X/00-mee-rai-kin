@@ -79,8 +79,8 @@ const Navbar = () => {
           </form>
         </div>
 
-        {/* Desktop Nav Links */}
-        <nav className="hidden md:flex gap-4 text-white font-semibold text-shadow text-base">
+        {/* ✅ Desktop Nav Links with wider spacing */}
+        <nav className="hidden md:flex gap-8 text-white font-semibold text-shadow text-base">
           <Link to="/" className="hover:text-gray-800 transition-colors duration-300">หน้าหลัก</Link>
           <Link to="/popular-menu" className="hover:text-gray-800 transition-colors duration-300">เมนูยอดนิยม</Link>
           <Link to="/random-menu" className="hover:text-gray-800 transition-colors duration-300">สุ่มเมนู</Link>
