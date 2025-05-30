@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecipeStore } from '../store/recipeStore';
 import RecipeCard from '../components/recipe/RecipeCard';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 
 const SearchResultsPage = () => {
   const location = useLocation();
@@ -11,6 +11,7 @@ const SearchResultsPage = () => {
 
   const { searchRecipes, searchResults } = useRecipeStore();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // สำหรับ toggle popup
 
   const filters = [
     'มังสวิรัติ',
@@ -24,18 +25,15 @@ const SearchResultsPage = () => {
   ];
 
   useEffect(() => {
-    // Perform search when component mounts or search query or filters change
     searchRecipes(searchQuery, selectedFilters);
   }, [searchQuery, selectedFilters, searchRecipes]);
 
   const toggleFilter = (filter: string) => {
-    setSelectedFilters(prev => {
-      if (prev.includes(filter)) {
-        return prev.filter(f => f !== filter);
-      } else {
-        return [...prev, filter];
-      }
-    });
+    setSelectedFilters(prev =>
+      prev.includes(filter)
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
   };
 
   return (
@@ -43,9 +41,59 @@ const SearchResultsPage = () => {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">ผลการค้นหา</h1>
 
-        <div className="flex row:flex-row gap-8">
-          {/* Filters */}
-          <div className="w-64 flex-shrink-0">
+        {/* Mobile Filter Button ด้านซ้ายบน */}
+        <div className="md:hidden mb-4 flex justify-start">
+          <button
+            onClick={() => setIsFilterOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-full shadow"
+          >
+            <Filter size={18} /> ตัวกรอง
+          </button>
+        </div>
+
+        {/* Filter Modal Popup for Mobile */}
+        {isFilterOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+            onClick={() => setIsFilterOpen(false)} // คลิก background ปิด popup
+          >
+            <div
+              className="bg-white rounded-xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto"
+              onClick={e => e.stopPropagation()} // ป้องกันคลิกใน modal ปิด popup
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">ตัวกรอง</h2>
+                <button
+                  className="text-gray-500 text-2xl font-bold leading-none"
+                  onClick={() => setIsFilterOpen(false)}
+                  aria-label="ปิดตัวกรอง"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="space-y-3">
+                {filters.map(filter => (
+                  <button
+                    key={filter}
+                    className={`w-full py-2 px-4 rounded-full text-left transition-colors duration-300 ${
+                      selectedFilters.includes(filter)
+                        ? 'bg-[#ff69b4] text-white'
+                        : 'bg-white border-2 border-[#ff69b4] hover:bg-pink-100'
+                    }`}
+                    onClick={() => toggleFilter(filter)}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Layout Desktop และ Mobile (ซ่อน filter sidebar บน mobile) */}
+        <div className="flex flex-row gap-8">
+          {/* Desktop Filter Sidebar */}
+          <div className="hidden md:block w-64 flex-shrink-0">
             <div className="bg-secondary rounded-xl p-4 sticky top-24">
               <h2 className="text-xl font-bold mb-4">ตัวกรอง</h2>
 
